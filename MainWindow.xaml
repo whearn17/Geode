@@ -52,8 +52,7 @@
                         HorizontalAlignment="Right">
                         <Border Width="35"
                             Height="30"
-                            Background="Transparent"
-                            CornerRadius="0,0,0,20">
+                            Background="Transparent">
                             <Button x:Name="btnMinimize"
                                 Width="35"
                                 Height="30"
@@ -64,8 +63,7 @@
 
                         <Border Width="35"
                             Height="30"
-                            Background="Transparent"
-                            CornerRadius="0,20,0,0">
+                            Background="Transparent">
                             <Button x:Name="btnClose"
                                 Width="35"
                                 Height="30"
