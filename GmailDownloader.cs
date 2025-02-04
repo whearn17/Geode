@@ -53,7 +53,9 @@ public static class GmailDownloadService
 
         string cleanEmailFileName = MakeValidFileName(rfcMessageId);
 
-        string emailPath = Path.Combine(outputPath, cleanEmailFileName, ".eml");
+        string fullFileName = cleanEmailFileName + ".eml";
+
+        string emailPath = Path.Combine(outputPath, fullFileName);
 
         await File.WriteAllTextAsync(emailPath, rawMessage, Encoding.UTF8);
     }
