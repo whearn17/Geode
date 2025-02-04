@@ -3,6 +3,7 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using Google.Apis.Gmail.v1;
 using Microsoft.Win32;
+using System.IO;
 
 namespace geode;
 
@@ -66,12 +67,17 @@ public partial class EmailDownloadWindow : Window
         {
             Style = (Style)FindResource("ModernTextBox"),
             Tag = "Username/Email",
-            Margin = new Thickness(0, 0, 0, 10)
+            Margin = new Thickness(0, 0, 0, 10),
+            Padding = new Thickness(5),
+            FontSize = 14,
+            Background = System.Windows.Media.Brushes.Transparent,
+            Foreground = System.Windows.Media.Brushes.White,
+            CaretBrush = System.Windows.Media.Brushes.White
         };
         Grid.SetRow(usernameBox, 1);
         setGrid.Children.Add(usernameBox);
 
-        // Message IDs TextBox
+        // Message IDs TextBox with improved multiline support and styling
         var messageIdsBox = new TextBox
         {
             Style = (Style)FindResource("ModernTextBox"),
@@ -80,7 +86,15 @@ public partial class EmailDownloadWindow : Window
             TextWrapping = TextWrapping.Wrap,
             AcceptsReturn = true,
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            Margin = new Thickness(0, 0, 0, 0)
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            Margin = new Thickness(0, 0, 0, 0),
+            Padding = new Thickness(5),
+            FontSize = 14,
+            Background = System.Windows.Media.Brushes.Transparent,
+            Foreground = System.Windows.Media.Brushes.White,
+            CaretBrush = System.Windows.Media.Brushes.White,
+            AcceptsTab = true,
+            IsUndoEnabled = true
         };
         Grid.SetRow(messageIdsBox, 2);
         setGrid.Children.Add(messageIdsBox);
@@ -104,7 +118,10 @@ public partial class EmailDownloadWindow : Window
 
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(messageIdsText))
             {
-                var messageIds = messageIdsText.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                var messageIds = messageIdsText.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(id => id.Trim())
+                    .Where(id => !string.IsNullOrEmpty(id))
+                    .ToArray();
                 downloadSets.Add((username, messageIds));
             }
         }
@@ -126,7 +143,18 @@ public partial class EmailDownloadWindow : Window
 
         foreach (var downloadSet in downloadSets)
         {
-            await GmailDownloadService.DownloadEmailsBulkAsync(_gmailService, downloadSet.username, downloadSet.messageIds, outputPath);
+            foreach (string rfcMessageId in downloadSet.messageIds)
+            {
+                try
+                {
+                    MessageBox.Show($"Collecing message ID {rfcMessageId} for user {downloadSet.username}", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await GmailDownloadService.DownloadSingleEmailAsync(_gmailService, downloadSet.username, rfcMessageId, Path.Combine(outputPath, downloadSet.username));
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show($"An error occured while getting message ID {rfcMessageId}: {exception.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
     }
 
