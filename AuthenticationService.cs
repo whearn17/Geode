@@ -31,6 +31,7 @@ public static class GmailAuthService
     private static async Task<GmailService> InitializeGmailServiceAsync(string credentialsPath)
     {
         UserCredential credential;
+        string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Geode", "OAuth");
 
         using (var stream = new FileStream(credentialsPath, FileMode.Open, FileAccess.Read))
         {
@@ -39,7 +40,7 @@ public static class GmailAuthService
                 Scopes,
                 "user",
                 CancellationToken.None,
-                new FileDataStore("Geode.OAuth.Store", true)
+                new FileDataStore(appDataPath, true)
             );
         }
 
