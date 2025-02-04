@@ -1,10 +1,11 @@
 # GEODE - Google Email Object Download Engine
 
 ## Overview
-GEODE (Google Email Object Download Engine) is a specialized tool designed for incident responders to efficiently retrieve emails from Google Workspace accounts using Internet Message IDs.
+GEODE (Google Email Object Download Engine) is a tool designed for incident responders to efficiently retrieve emails from Google Workspace accounts using Internet Message IDs.
 
 ## Key Features
 - Rapid email retrieval using Internet Message IDs
+- Bulk email retrieval from multiple accounts
 
 ## Use Cases
 - Quickly extract emails sent by identified threat actors
