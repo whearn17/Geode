@@ -57,7 +57,7 @@ public static class GmailDownloadService
 
         string emailPath = Path.Combine(outputPath, fullFileName);
 
-        await File.WriteAllTextAsync(emailPath, rawMessage, Encoding.UTF8);
+        await File.WriteAllTextAsync(emailPath, rawMessage, new UTF8Encoding(false));
     }
 
     private static string MakeValidFileName(string name)
