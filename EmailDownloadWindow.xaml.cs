@@ -4,6 +4,9 @@ using System.Windows.Controls;
 using Google.Apis.Gmail.v1;
 using Microsoft.Win32;
 using System.IO;
+using Google.Apis.Gmail.v1.Data;
+using System.Text.Unicode;
+using System.Text;
 
 namespace geode;
 
@@ -141,18 +144,19 @@ public partial class EmailDownloadWindow : Window
             outputPath = outputPathPicker.FolderName;
         }
 
+        string logFileName = $"geode.log";
+
         foreach (var downloadSet in downloadSets)
         {
             foreach (string rfcMessageId in downloadSet.messageIds)
             {
                 try
                 {
-                    MessageBox.Show($"Collecing message ID {rfcMessageId} for user {downloadSet.username}", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
                     await GmailDownloadService.DownloadSingleEmailAsync(_gmailService, downloadSet.username, rfcMessageId, Path.Combine(outputPath, downloadSet.username));
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
-                    MessageBox.Show($"An error occured while getting message ID {rfcMessageId}: {exception.ToString()}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    await File.AppendAllTextAsync(Path.Combine(outputPath, logFileName), $"{DateTime.Now.ToString("dd/mm/yyyy hh:mm:ss tt")} Failed to get message ID: {rfcMessageId}\n", Encoding.UTF8);
                 }
             }
         }
